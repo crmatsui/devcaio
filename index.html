@@ -1,69 +1,77 @@
-<!DOCTYPE html>
-<html lang="pt-br">
+<!DOCTYPE HTML>
+<html lang = "en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatble" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Star Wars Characters DEV Caio Resio Matsui</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="shortcut icon" href="./assets/milleniumfalcon.png" type="image/x-icon">
+    <meta http-equiv="X-UA-Compatible" content="IE-edge">
+    <meta name="viewport" content="width-device-width, initial-sacle-1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
     <header>
-
-       <a href="./index.html">
-        <div class="logo">
-            <img src="./assets/starwarslogo.png" alt="logo" class="logo-img"/>
-            <span class="logo-text">Characters</span>
-        </div>
-       </a>
-       
-        <div class="social-media">
-            <a href="https://www.instagram.com/caiormatsui/" target="=_blank">
-                <i class="fa-brands fa-instagram"></i>
-
-            </a>
-            <a href="https://www.instagram.com/caiormatsui/" target="=_blank">
-                <i class="fa-brands fa-facebook-f"></i>
-
-            </a>
-            <a href="https://www.instagram.com/caiormatsui/" target="=_blank">
-                <i class="fa-brands fa-github"></i>
-
-            </a>
-            <a href="https://www.instagram.com/caiormatsui/" target="=_blank">
-                <i class="fa-brands fa-linkedin-in"></i>
-            </a>
-            
-        </div>
+        <img id="logo" src="./logo batman 2022.png"/>
+        <nav>
+            <ul>
+                <a href="index.html">
+                    <li>Home</li>
+                </a>
+                <a href="./contato.html">
+                    <li>Contato</li>
+                </a>
+                <a href="./fotos.html">
+                    <li>Fotos</li> 
+                </a>
+                <a href="./comentarios.html">
+                    <li>Comentários</li>
+                </a>
+            </ul>
+        </nav>
     </header>
-
-    <div class="main-container">
-
-        <h2>Conheca todos os personagens de Star Wars em um so lugar</h2>
-
-        <div class="main-content" id="main-content"></div>
-
-        <div class="modal" id="modal" onclick="hideModal()">
-            <div class="modal-content" id="modal-content"></div>
+    <div id="banner"></div>
+    <div id="trailer-conteiner">
+        <div class="content">
+            <video controls class="Trailer">
+                <source src="./THE BATMAN – Main Trailer.mp4" type="video/mp4">
+            </video>
+            <div id="sinopse">
+                <p class="description">
+                     Após dois anos espreitando as ruas como Batman, Bruce Wayne se encontra nas profundezas
+                     mais sombrias de Gotham City.
+                </p>
+                <button class="button">Comprar ingresso</button>
             </div>
-            
-            
-        <div class="buttons">
-        <button id="back-button" disabled>Anterior</button>
-        <button id="next-button" disabled>Proxima</button> 
+        </div> 
+    </div>
 
-        </div>
-
+    <div class="actor-cards-container">
+        <div class="cards-content">
+            <div class="card banner-1">Robert Pattison - Batman</div>
+            <div class="card banner-2">Zoe Kravitz - Mulher gato</div>
+            <div class="card banner-3"> Jeffrey Wright - Gordon</div>
+        </div>   
     </div>
 
     <footer>
-        <p class="footer-logo">Star Wars Characters</p>
-        <p class="copyright">Desenvolvido por &copy; Caio Matsui</p>
+        <img style="object-fit: contain;" id="logo" src="./logo batman 2022.png"/>
+        <span>Todos os direitos reservados©</span>
+        <span> Desenvolvido por Caio Matsui</span>
 
+        <nav class="footer-navigation">
+            <ul class="footer-list">
+                <a href="index.html">
+                    <li>Home</li>
+                </a>
+                <a href="./contato.html">
+                    <li>Contato</li>
+                </a>
+                <a href="./fotos.html">
+                    <li>Fotos</li> 
+                </a>
+                <a href="./comentarios.html">
+                    <li>Comentarios</li>
+                </a>
+            </ul>
+        </nav>
     </footer>
-
-    <script src="https://kit.fontawesome.com/c7361b8575.js" crossorigin="anonymous"></script>
-    <script src="./script.js"></script>
 </body>
 </html>
