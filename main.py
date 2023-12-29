@@ -1,61 +1,66 @@
-import requests
-from bs4 import BeautifulSoup
-import locale
+from openpyxl import Workbook
+from datetime import date
+from openpyxl.styles import PatternFill, Border, Side, Alignment, Protection, Font
+from openpyxl.chart import BarChart, Reference, Series
+from openpyxl.chart import (LineChart,Reference)
 
-from modelos import FundoImobiliario, Estrategia
+# acao = input("Qual o codigo da Ação que você quer processar? ").upper()
+acao = "BIDI4"
 
-locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
-def trata_porcentagem(porcentagem_str):
-    return locale.atof(porcentagem_str.split('%')[0])
+with open(f'./dados/{acao}.txt','r') as arquivo_cotacao:
+    linhas = arquivo_cotacao.readlines()
+    linhas = [linha.replace("\n", "").split(";") for linha in linhas]
 
+workbook = Workbook()
+planilha_ativa = workbook.active
+planilha_ativa.title = "Dados"
 
-def trata_decimal(decimal_str):
-    return locale.atof(decimal_str)
+planilha_ativa.append(["DATA", "COTAÇÃO", "BANDA INFERIOR", "BANDA SUPERIOR"])
 
-
-headers = {'User-Agent': 'Mozilla/5.0'}
-
-resposta = requests.get('https://www.fundamentus.com.br/fii_resultado.php', headers=headers)
-
-soup = BeautifulSoup(resposta.text,'html.parser')
-
-linhas = soup.find(id='tabelaResultado').find('tbody').find_all('tr')
-
-resultado =[]
-
-estrategia = Estrategia(
-    cotacao_atual_minima=50.0,
-    dividend_yield_minimo=5,
-    p_vp_minimo=0.70,
-    valor_mercado_minimo=200000000,
-    liquidez_minima=50000,
-    qt_minima_imoveis=5,
-    maxima_vacancia_media=10
-)
+indice = 2
 
 for linha in linhas:
-    dados_fundo = linha.find_all('td')
-    codigo = dados_fundo[0].text
-    segmento = dados_fundo[1].text
-    cotacao = trata_decimal(dados_fundo[2].text)
-    ffo_yield = trata_porcentagem(dados_fundo[3].text)
-    dividend_yield = trata_porcentagem(dados_fundo[4].text)
-    p_vp = trata_decimal(dados_fundo[5].text)
-    valor_mercado = trata_decimal(dados_fundo[6].text)
-    liquidez = trata_decimal(dados_fundo[7].text)
-    qt_imoveis = dados_fundo[8].text
-    preco_m2 = trata_decimal(dados_fundo[9].text)
-    aluguel_m2 = trata_decimal(dados_fundo[10].text)
-    cap_rate = trata_porcentagem(dados_fundo[11].text)
-    vacancia_media = trata_porcentagem(dados_fundo[12].text)
-
-    fundo_imobiliario = FundoImobiliario(
-        codigo, segmento, cotacao_atual, ffo_yield, dividend_yield, p_vp, valor_mercado, liquidez,
-                 qt_imoveis, preco_m2, aluguel_m2, cap_rate, vacancia_media
+    # Data
+    ano_mes_dia = linha[0].split(" ")[0]
+    data = date(
+        year=int(ano_mes_dia.split("-")[0]),
+        month=int(ano_mes_dia.split("-")[1]),
+        day=int(ano_mes_dia.split("-")[2])
     )
+    # COTAÇÃO
+    cotacao = float(linha[1])
 
-if estrategia.aplica_estrategia(fundo_imobiliario):
-    resultado.append(fundo_imobiliario)
+    #Atualiza as células da Planilha Ativa do Excel
+    planilha_ativa[f'A{indice}'] = data
+    planilha_ativa[f'B{indice}'] = cotacao
+    planilha_ativa[f'C{indice}'] = f'=AVERAGE(B{indice}:B{indice + 19}) - 2*STDEV(B{indice} + B{indice + 19})'
+    planilha_ativa[f'D{indice}'] = f'=AVERAGE(B{indice}:B{indice + 19}) + 2*STDEV(B{indice} + B{indice + 19})'
 
+    indice += 1
 
-pass
+planilha_grafico = workbook.create_sheet("Grafico")
+workbook.active = planilha_grafico
+
+#Mesclagem de celulas para criação do cabeçalho do gráfico
+planilha_grafico.merge_cells("A1:T2")
+cabecalho = planilha_grafico["A1"]
+cabecalho.font = Font(b=True, sz=18, color="FFFFFF")
+cabecalho.fill = PatternFill("solid", fgColor="2a6637")
+cabecalho.alignment = Alignment(vertical="center", horizontal="center")
+cabecalho.value = "Histórico de Cotações"
+
+grafico = LineChart()
+grafico.width = 33.87
+grafico.height = 14.82
+grafico.title = "Histórico de Cotações"
+grafico.x_axis.tittle = "Data da Cotação"
+grafico.y_axis.title = "Valor da Cotação"
+
+referencia_cotacoes = Reference(planilha_ativa, min_col=2, min_row=2, max_col=4, max_row=indice)
+referencia_datas = Reference(planilha_ativa, min_col=1, min_row=2, max_col=1, max_row=indice)
+grafico.add_data(referencia_cotacoes)
+grafico.set_categories(referencia_datas)
+
+planilha_grafico.add_chart(grafico, "A3")
+
+workbook.save("./saida/Planilha.xlsx")
